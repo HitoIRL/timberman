@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
-opengl::window::window(std::string_view title, const glm::uvec2 &size) {
+opengl::window::window(std::string_view title, const glm::uvec2 &size) : size(size) {
     // glfw
     glfwInit();
 
@@ -20,6 +20,9 @@ opengl::window::window(std::string_view title, const glm::uvec2 &size) {
     gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
     glViewport(0, 0, size.x, size.y);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 opengl::window::~window() {
@@ -39,4 +42,16 @@ bool opengl::window::open() const {
 
 void opengl::window::setBackground(const glm::vec3 &color) const {
     glClearColor(color.r, color.g, color.b, 1.0f);
+}
+
+void opengl::window::setKeyCallback(void (* callback)(GLFWwindow*, int, int, int, int)) const {
+    glfwSetKeyCallback(_window, callback);
+}
+
+void opengl::window::setUserPointer(void* pointer) const {
+    glfwSetWindowUserPointer(_window, pointer);
+}
+
+const glm::uvec2& opengl::window::getSize() const {
+    return size;
 }
